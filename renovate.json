@@ -1,6 +1,12 @@
 {
   "extends": [
-    "config:base",
-    ":preserveSemverRanges"
-  ]
+    "@nuxtjs"
+  ],
+  "baseBranches": [
+    "master"
+  ],
+  "ignoreDeps": [],
+  "lockFileMaintenance": {
+    "enabled": true
+  }
 }

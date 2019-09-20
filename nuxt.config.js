@@ -1,62 +1,74 @@
-export default {
-  /*
-  ** Rendering mode
-  ** Doc: https://nuxtjs.org/api/configuration-mode
-  */
-  mode: 'universal',
+const locale = process.env.NUXT_LOCALE || 'en'
 
-  /*
-  ** Headers of the page
-  ** Doc: https://vue-meta.nuxtjs.org/api/#metainfo-properties
-  */
+export default {
+  modern: 'client',
   head: {
-    title: 'Nuxt.js starter for CSB',
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Official Nuxt.js starter for CodeSandBox' }
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'preconnect', href: 'https://www.google-analytics.com' }
+    ]
   },
-
-  /*
-  ** Global CSS
-  ** Doc: https://nuxtjs.org/api/configuration-css
-  */
-  css: [],
-
-  /*
-  ** Plugins to load before mounting the App
-  ** Doc: https://nuxtjs.org/guide/plugins
-  */
-  plugins: [],
-
-  /*
-  ** Nuxt.js modules
-  ** Doc: https://nuxtjs.org/guide/modules
-  */
-  modules: [
-    // Doc: https://http.nuxtjs.org
-    '@nuxt/http',
-    // TODO: Remove it if you want to eject from codeSandbox
-    './codesandbox'
+  styleResources: {
+    scss: [
+      './assets/styles/variables/theme.scss'
+    ]
+  },
+  css: [
+    'normalize.css',
+    'highlight.js/styles/github.css',
+    '~/assets/scss/main.scss'
   ],
-
-  /*
-  ** HTTP module configuration
-  */
+  modules: [
+    ['~/modules/docs/', { port: 3001 }],
+    '~/modules/crawler/',
+    '~/modules/static/',
+    // https://github.com/nuxt-community/style-resources-module
+    '@nuxtjs/style-resources',
+    // https://github.com/Developmint/nuxt-svg-loader/
+    'nuxt-svg-loader',
+    // https://pwa.nuxtjs.org
+    '@nuxtjs/pwa'
+  ],
   http: {
-    // See https://http.nuxtjs.org/api/#options
+    prefix: '/_api/'
   },
-
-  /*
-  ** Build configuration
-  ** Doc: https://nuxtjs.org/api/configuration-build
-  */
+  plugins: [
+    '~/plugins/init.js',
+    '~/plugins/intersection-observer.client.js',
+    '~/plugins/ga.client.js',
+    '~/plugins/adblock.client.js'
+  ],
+  env: {
+    githubToken: process.env.GITHUB_TOKEN || '4aa6bcf919d238504e7db59a66d32e78281c0ad3',
+    docSearchApiKey: 'ff80fbf046ce827f64f06e16f82f1401',
+    locale
+  },
+  loading: { color: '#41B883' },
+  router: {
+    scrollBehavior(to, from, savedPosition) {
+      // savedPosition is only available for popstate navigations (back button)
+      if (savedPosition) {
+        return savedPosition
+      }
+      return { x: 0, y: 0 }
+    }
+  },
   build: {
-    /*
-    ** You can extend webpack config here
-    */
-    extend(config, ctx) {}
+    hardSource: {
+      info: {
+        level: 'warn' // nuxt/nuxt.js#5653
+      }
+    }
+  },
+  generate: {
+    fallback: true,
+    interval: 100
+  },
+  manifest: {
+    lang: process.env.NUXT_LOCALE || 'en'
   }
-};
+}
