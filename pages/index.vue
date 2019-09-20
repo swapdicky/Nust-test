@@ -11,6 +11,7 @@
           <IconLink/>
         </a>
         <NLink to="/about" class="button--grey">About</NLink>
+        <NLink to="/who" class="button--grey">Who</NLink>
       </div>
     </div>
   </section>
